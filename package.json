@@ -1,0 +1,23 @@
+{
+  "name": "comet-chat",
+  "version": "0.0.0",
+  "description": "A Comet based chat platform written in Node",
+  "main": "main.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mike-melo/comet-chat.git"
+  },
+  "keywords": [
+    "comet",
+    "chat",
+    "platform",
+    "node"
+  ],
+  "author": "michael.melo@gmail.com",
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "gitHead": "7df015c0b958d4e5e2cc83d54940d6e03537f81d"
+}
