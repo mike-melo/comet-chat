@@ -1,0 +1,38 @@
+<html>
+<head>
+	<script type="text/javascript" src="js/jquery-1.9.1.js"></script>
+	<script>
+		$(function() {
+			var chatSocket = new WebSocket("ws://localhost:8080/", "echo-protocol");
+			chatSocket.onopen = function (event) {	
+			};
+
+			chatSocket.onmessage = function(event) {
+				console.log(event);
+			};
+			$('#message-form').submit(function(e) {
+				e.preventDefault();
+				chatSocket.send($('#message').val());
+			} );
+		});
+	</script>
+	<style>
+		textarea, input#message { 
+			display: block;
+		}
+		
+		textarea#chat-window {
+			height: 20em;
+			width: 20em;
+		}
+	</style>
+</head>
+<body>
+<label>My name is:</label>
+<input id="name" name="name" type="text"></input>
+<textarea disabled id="chat-window" name="chat-window"></textarea>
+<form name="message-form" id="message-form" action="#" method="post">
+	<input id="message" name="message" type="text"></input>
+</form>
+</body>
+</html>
