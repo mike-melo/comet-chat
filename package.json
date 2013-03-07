@@ -19,5 +19,8 @@
   "author": "michael.melo@gmail.com",
   "license": "BSD",
   "readmeFilename": "README.md",
-  "gitHead": "7df015c0b958d4e5e2cc83d54940d6e03537f81d"
+  "gitHead": "7df015c0b958d4e5e2cc83d54940d6e03537f81d",
+  "dependencies": {
+    "websocket": "~1.0.8"
+  }
 }

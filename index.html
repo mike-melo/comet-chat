@@ -2,17 +2,33 @@
 <head>
 	<script type="text/javascript" src="js/jquery-1.9.1.js"></script>
 	<script>
-		$(function() {
+
+		var Chat = Chat || (function($){
 			var chatSocket = new WebSocket("ws://localhost:8080/", "echo-protocol");
-			chatSocket.onopen = function (event) {	
+                        
+			chatSocket.onopen = function (event) {  
+                        };
+
+                        chatSocket.onmessage = function(event) {
+				console.log($.parseJSON(event.data));
+                        };
+		
+			var constructPayload = function(name, message) {
+				var payload = {sender: name, message: message};
+				return JSON.stringify(payload);	
+			};
+	
+			var sendMessage = function(name, message) {
+				console.log('Sending message: ' + message);
+				chatSocket.send(constructPayload(name, message));
 			};
 
-			chatSocket.onmessage = function(event) {
-				console.log(event);
-			};
+			return {sendMessage: sendMessage};
+		})(jQuery);
+		$(function() {
 			$('#message-form').submit(function(e) {
 				e.preventDefault();
-				chatSocket.send($('#message').val());
+				Chat.sendMessage($('#name').val(), $('#message').val());
 			} );
 		});
 	</script>
