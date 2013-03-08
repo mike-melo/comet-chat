@@ -2,6 +2,15 @@
 <head>
 	<script type="text/javascript" src="js/jquery-1.9.1.js"></script>
 	<script>
+		var ChatWindow = ChatWindow || (function($) { 
+			var newMessage = function(message) {
+				var window = $('#chat-window');
+				window.append('<div class="chat-message"><div class="sender">' + message.sender + '</div><div class="message">' + message.message + '</div></div>');
+				var height = window[0].scrollHeight;
+  				window.scrollTop(height);
+			};
+			return {newMessage : newMessage};
+		})(jQuery);
 
 		var Chat = Chat || (function($){
 			var chatSocket = new WebSocket("ws://localhost:8080/", "echo-protocol");
@@ -10,7 +19,9 @@
                         };
 
                         chatSocket.onmessage = function(event) {
-				console.log($.parseJSON(event.data));
+				var json = $.parseJSON(event.data);
+				ChatWindow.newMessage(json);	
+				console.log(json);
                         };
 		
 			var constructPayload = function(name, message) {
@@ -26,6 +37,7 @@
 			return {sendMessage: sendMessage};
 		})(jQuery);
 		$(function() {
+			$('#name').focus();
 			$('#message-form').submit(function(e) {
 				e.preventDefault();
 				Chat.sendMessage($('#name').val(), $('#message').val());
@@ -33,22 +45,74 @@
 		});
 	</script>
 	<style>
-		textarea, input#message { 
+		body { 
+			font-family: arial;
+		}
+	
+		#chat label {
+			color: white;
+		}
+	
+		input, div#chat-window { 
+			-moz-border-radius: 10px;
+			border-radius: 10px;
+			border: 2px inset;
+		}
+
+		input#message { 
 			display: block;
 		}
-		
-		textarea#chat-window {
+	
+		input#message {
+			width: 408px;
+		}
+
+		#name {
+			width: 320px;
+		}
+	
+		#chat-window {
+			padding: 2px 2px;
 			height: 20em;
-			width: 20em;
+			width: 400px;
+			overflow-y: scroll;
+			background-color: white;
+			margin-top: 5px;
+		}
+
+		.sender, .message { 
+			padding: 2px 5px;
+		}
+
+		.sender {
+			background-color: #64a8d1;
+			-moz-border-radius: 10px;
+			border-radius: 10px;
+			font-weight: bold;
+		}
+
+		.message {
+			margin-bottom: 0.5em;
+		}
+		
+		#chat {
+			background-color: #64a8d1;
+			display: inline-block;
+			 -moz-border-radius: 10px;
+                        border-radius: 10px;
+			padding: 9px 20px 0px 18px;
+			border: 1px solid gray;
 		}
 	</style>
 </head>
 <body>
-<label>My name is:</label>
-<input id="name" name="name" type="text"></input>
-<textarea disabled id="chat-window" name="chat-window"></textarea>
-<form name="message-form" id="message-form" action="#" method="post">
-	<input id="message" name="message" type="text"></input>
-</form>
+<div id="chat">
+	<label>My name is:</label>
+	<input id="name" name="name" type="text"></input>
+	<div id="chat-window"></div>
+	<form name="message-form" id="message-form" action="#" method="post">
+		<input id="message" name="message" type="text"></input>
+	</form>
+</div>
 </body>
 </html>

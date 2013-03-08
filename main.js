@@ -1,7 +1,4 @@
 var WebSocketServer = require('websocket').server;
-/* Taken from: http://cjihrig.com/blog/creating-your-own-node-js-websocket-echo-server/
-   Thank you!
-*/
 var http = require('http');
 
 var server = http.createServer(function(request, response) {
@@ -9,6 +6,7 @@ var server = http.createServer(function(request, response) {
     response.writeHead(404);
     response.end();
 });
+
 server.listen(8080, function() {
     console.log((new Date()) + ' Server is listening on port 8080');
 });
@@ -28,16 +26,13 @@ function originIsAllowed(origin) {
   return true;
 }
 
-var messages = [];
 var connections = [];
 
-var broadcast = function() {
-	for(var i = 0; i<connections.length; i++) {
-		for(var j = 0; j<messages.length; j++) {
-			console.log((new Date()) + ' Broadcasting: ' + JSON.stringify(messages[j])); 
-			connections[i].sendUTF(JSON.stringify(messages[j]));
-		}
-	}
+var broadcast = function(message) {
+	connections.forEach(function(connection) {
+		console.log((new Date()) + ' Broadcasting: ' + JSON.stringify(message)); 
+		connection.sendUTF(JSON.stringify(message));	
+	});
 };
 
 wsServer.on('request', function(request) {
@@ -56,9 +51,8 @@ wsServer.on('request', function(request) {
     connection.on('message', function(message) {
         if (message.type === 'utf8') {
 	    var payload = JSON.parse(message.utf8Data);
-	    messages.push(payload);	 
             console.log('Received Message: ' + payload.message);
-            broadcast();
+            broadcast(payload);
         }
         else if (message.type === 'binary') {
             console.log('Received Binary Message of ' + message.binaryData.length + ' bytes');
