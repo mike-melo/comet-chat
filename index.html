@@ -8,20 +8,35 @@
 				window.append('<div class="chat-message"><div class="sender">' + message.sender + '</div><div class="message">' + message.message + '</div></div>');
 				var height = window[0].scrollHeight;
   				window.scrollTop(height);
+				Sound.play.newMessage();
 			};
 			return {newMessage : newMessage};
 		})(jQuery);
 
+		var Sound = Sound || (function($) {
+			var playSoundFile = function(soundFile) {
+				$('#new-message-sound').empty();
+				$('#new-message-sound').append("<embed src=\""+soundFile+"\" hidden=\"true\" autostart=\"true\" loop=\"false\" />");
+			};
+
+			var play = {newMessage : function() {
+				playSoundFile('sounds/new-message.mp3');	
+			}};			
+	
+			return {
+				play : play 
+			};
+		})(jQuery);
+
 		var Chat = Chat || (function($){
 			var chatSocket = new WebSocket("ws://localhost:8080/", "echo-protocol");
-                        
+ 
 			chatSocket.onopen = function (event) {  
                         };
 
                         chatSocket.onmessage = function(event) {
 				var json = $.parseJSON(event.data);
 				ChatWindow.newMessage(json);	
-				console.log(json);
                         };
 		
 			var constructPayload = function(name, message) {
@@ -30,7 +45,6 @@
 			};
 	
 			var sendMessage = function(name, message) {
-				console.log('Sending message: ' + message);
 				chatSocket.send(constructPayload(name, message));
 			};
 
@@ -107,6 +121,7 @@
 </head>
 <body>
 <div id="chat">
+	<span id="new-message-sound"></span>
 	<label>My name is:</label>
 	<input id="name" name="name" type="text"></input>
 	<div id="chat-window"></div>
