@@ -1,17 +1,19 @@
 var WebSocketServer = require('websocket').server;
 var http = require('http');
+var fs = require('fs');
+var express = require('express');
+var app = express();
 
-var server = http.createServer(function(request, response) {
-    console.log((new Date()) + ' Received request for ' + request.url);
-    response.writeHead(404);
-    response.end();
+var server = require('http').createServer(app);
+
+app.configure(function() {
+	app.use(express.logger('dev'));
+	app.use(express.static(__dirname + '/site'));
 });
 
-server.listen(8080, function() {
-    console.log((new Date()) + ' Server is listening on port 8080');
-});
+server.listen(8080);
 
-wsServer = new WebSocketServer({
+var wsServer = new WebSocketServer({
     httpServer: server,
     // You should not use autoAcceptConnections for production
     // applications, as it defeats all standard cross-origin protection
