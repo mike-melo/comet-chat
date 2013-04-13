@@ -51,7 +51,16 @@
 			return {sendMessage: sendMessage};
 		})(jQuery);
 		$(function() {
-			$('#name').focus();
+			if(localStorage["chatName"]) {
+				$('#name').val(localStorage["chatName"]);
+				$('#message').focus();
+			} else {
+				$('#name').focus();
+			}
+			$('#name').bind("input", function(e) {
+				console.log('changed: ' + $(this).val());
+				localStorage["chatName"] = $(this).val();
+			});
 			$('#message-form').submit(function(e) {
 				e.preventDefault();
 				Chat.sendMessage($('#name').val(), $('#message').val());
